@@ -1,15 +1,24 @@
+import users from '../../src/test-data/users.json';
 import { test, expect } from '../../src/fixtures/base.fixture';
 import data from '../../src/test-data/checkout.json';
-import { env } from '../../src/utils/env.config';
 
 test(
   'complete checkout with two products and required customer validation',
   { tag: '@regression' },
-  async ({ page, loginPage, inventoryPage, cartPage, checkoutPage }) => {
+  async ({
+    account,
+    page,
+    loginPage,
+    inventoryPage,
+    cartPage,
+    checkoutPage,
+  }) => {
     await test.step('Login through the UI', async () => {
       await loginPage.open('/');
-      await loginPage.login(env.username, env.password);
-      await expect(inventoryPage.title).toHaveText('Products');
+      await loginPage.login(account.username, account.password);
+      await expect(inventoryPage.title).toHaveText(
+        users.standard.expectedInventoryTitle,
+      );
     });
 
     await test.step('Sort products and add the selected products', async () => {
@@ -63,7 +72,9 @@ test(
       );
       await expect(inventoryPage.cartBadge).toHaveCount(0);
       await checkoutPage.backToProducts();
-      await expect(inventoryPage.title).toHaveText('Products');
+      await expect(inventoryPage.title).toHaveText(
+        users.standard.expectedInventoryTitle,
+      );
     });
   },
 );

@@ -1,17 +1,19 @@
+import users from '../../src/test-data/users.json';
 import { test, expect } from '../../src/fixtures/base.fixture';
 import data from '../../src/test-data/checkout.json';
-import { env } from '../../src/utils/env.config';
 
 test(
   'cancel checkout and retain the product in the cart',
   { tag: '@regression' },
-  async ({ loginPage, inventoryPage, cartPage, checkoutPage }) => {
+  async ({ account, loginPage, inventoryPage, cartPage, checkoutPage }) => {
     const product = data.products[0];
 
     await test.step('Login and start checkout with one product', async () => {
       await loginPage.open('/');
-      await loginPage.login(env.username, env.password);
-      await expect(inventoryPage.title).toHaveText('Products');
+      await loginPage.login(account.username, account.password);
+      await expect(inventoryPage.title).toHaveText(
+        users.standard.expectedInventoryTitle,
+      );
       await inventoryPage.addProduct(product.name);
       await inventoryPage.openCart();
       await expect(cartPage.itemNames).toHaveText([product.name]);

@@ -1,17 +1,19 @@
+import users from '../../src/test-data/users.json';
 import { test, expect } from '../../src/fixtures/base.fixture';
 import data from '../../src/test-data/checkout.json';
-import { env } from '../../src/utils/env.config';
 
 test(
   'add a product then remove it and continue shopping',
   { tag: ['@smoke', '@regression'] },
-  async ({ loginPage, inventoryPage, cartPage }) => {
+  async ({ account, loginPage, inventoryPage, cartPage }) => {
     const product = data.products[0];
 
     await test.step('Login and add a product', async () => {
       await loginPage.open('/');
-      await loginPage.login(env.username, env.password);
-      await expect(inventoryPage.title).toHaveText('Products');
+      await loginPage.login(account.username, account.password);
+      await expect(inventoryPage.title).toHaveText(
+        users.standard.expectedInventoryTitle,
+      );
       await inventoryPage.addProduct(product.name);
       await expect(inventoryPage.cartBadge).toHaveText('1');
     });
@@ -27,7 +29,9 @@ test(
 
     await test.step('Return to the catalog with an empty cart', async () => {
       await cartPage.continueShopping();
-      await expect(inventoryPage.title).toHaveText('Products');
+      await expect(inventoryPage.title).toHaveText(
+        users.standard.expectedInventoryTitle,
+      );
       await expect(inventoryPage.cartBadge).toHaveCount(0);
     });
   },

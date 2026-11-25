@@ -1,0 +1,48 @@
+{
+  "standard": {
+    "username": "standard_user",
+    "behavior": "normal",
+    "expectedInventoryTitle": "Products"
+  },
+  "lockedOut": {
+    "username": "locked_out_user",
+    "behavior": "loginRejected",
+    "expectedError": "Epic sadface: Sorry, this user has been locked out."
+  },
+  "problem": {
+    "username": "problem_user",
+    "behavior": "applicationProblems"
+  },
+  "performance": {
+    "username": "performance_glitch_user",
+    "behavior": "slowResponses"
+  },
+  "error": {
+    "username": "error_user",
+    "behavior": "actionErrors"
+  },
+  "visual": {
+    "username": "visual_user",
+    "behavior": "visualDifferences"
+  },
+  "negativeCases": [
+    {
+      "name": "incorrect password",
+      "username": "valid",
+      "password": "invalid",
+      "error": "Epic sadface: Username and password do not match any user in this service"
+    },
+    {
+      "name": "missing username",
+      "username": "empty",
+      "password": "valid",
+      "error": "Epic sadface: Username is required"
+    },
+    {
+      "name": "missing password",
+      "username": "valid",
+      "password": "empty",
+      "error": "Epic sadface: Password is required"
+    }
+  ]
+}

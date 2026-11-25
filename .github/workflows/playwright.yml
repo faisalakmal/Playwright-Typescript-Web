@@ -26,6 +26,7 @@ jobs:
     env:
       CI: true
       TEST_ENV: ${{ inputs.environment || 'dev' }}
+      ACCOUNT_MODE: ${{ vars.ACCOUNT_MODE || 'demo' }}
       BASE_URL: ${{ vars.BASE_URL }}
       SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
       SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD }}

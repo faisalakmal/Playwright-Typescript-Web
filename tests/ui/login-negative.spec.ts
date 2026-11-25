@@ -1,20 +1,19 @@
 import { test, expect } from '../../src/fixtures/base.fixture';
-import scenarios from '../../src/test-data/login-negative.json';
-import { env } from '../../src/utils/env.config';
+import users from '../../src/test-data/users.json';
 
-for (const scenario of scenarios) {
+for (const scenario of users.negativeCases) {
   test(
     `reject login with ${scenario.name}`,
     { tag: ['@regression', '@negative'] },
-    async ({ loginPage, inventoryPage }) => {
-      const username = scenario.username === 'empty' ? '' : env.username;
+    async ({ account, loginPage, inventoryPage }) => {
+      const username = scenario.username === 'empty' ? '' : account.username;
       // Derive a deliberately incorrect value without storing credentials in fixtures.
       const password =
         scenario.password === 'empty'
           ? ''
           : scenario.password === 'invalid'
-            ? `${env.password}-invalid`
-            : env.password;
+            ? `${account.password}-invalid`
+            : account.password;
 
       await loginPage.open('/');
       await loginPage.login(username, password);
@@ -23,8 +22,10 @@ for (const scenario of scenarios) {
       await expect(inventoryPage.title).toHaveCount(0);
 
       await test.step('Recover with valid credentials', async () => {
-        await loginPage.login(env.username, env.password);
-        await expect(inventoryPage.title).toHaveText('Products');
+        await loginPage.login(account.username, account.password);
+        await expect(inventoryPage.title).toHaveText(
+          users.standard.expectedInventoryTitle,
+        );
       });
     },
   );

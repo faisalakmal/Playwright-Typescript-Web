@@ -1,16 +1,18 @@
+import users from '../../src/test-data/users.json';
 import { test, expect } from '../../src/fixtures/base.fixture';
 import checkout from '../../src/test-data/checkout.json';
 import scenarios from '../../src/test-data/checkout-negative.json';
-import { env } from '../../src/utils/env.config';
 
 for (const scenario of scenarios) {
   test(
     `reject checkout without ${scenario.field}`,
     { tag: ['@regression', '@negative'] },
-    async ({ loginPage, inventoryPage, cartPage, checkoutPage }) => {
+    async ({ account, loginPage, inventoryPage, cartPage, checkoutPage }) => {
       await loginPage.open('/');
-      await loginPage.login(env.username, env.password);
-      await expect(inventoryPage.title).toHaveText('Products');
+      await loginPage.login(account.username, account.password);
+      await expect(inventoryPage.title).toHaveText(
+        users.standard.expectedInventoryTitle,
+      );
       await inventoryPage.addProduct(checkout.products[0].name);
       await inventoryPage.openCart();
       await expect(cartPage.itemNames).toHaveText([checkout.products[0].name]);
