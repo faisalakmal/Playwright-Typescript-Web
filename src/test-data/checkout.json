@@ -1,0 +1,18 @@
+{
+  "customer": {
+    "firstName": "Faisal",
+    "lastName": "Automation",
+    "postalCode": "12345"
+  },
+  "products": [
+    { "name": "Sauce Labs Backpack", "price": 29.99 },
+    { "name": "Sauce Labs Bike Light", "price": 9.99 }
+  ],
+  "expected": {
+    "subtotal": "Item total: $39.98",
+    "tax": "Tax: $3.20",
+    "total": "Total: $43.18",
+    "requiredFirstName": "Error: First Name is required",
+    "confirmationText": "Your order has been dispatched, and will arrive just as fast as the pony can get there!"
+  }
+}
