@@ -4,20 +4,28 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        type: choice
+        default: dev
+        options: [dev, staging, production]
 
 permissions:
   contents: read
 
 concurrency:
-  group: playwright-${{ github.workflow }}-${{ github.ref }}
+  group: playwright-${{ github.workflow }}-${{ github.ref }}-${{ inputs.environment || 'dev' }}
   cancel-in-progress: true
 
 jobs:
   ui-tests:
+    environment: ${{ inputs.environment || 'dev' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       CI: true
+      TEST_ENV: ${{ inputs.environment || 'dev' }}
       BASE_URL: ${{ vars.BASE_URL }}
       SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
       SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
@@ -44,7 +52,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-ui-report
+          name: playwright-ui-report-${{ env.TEST_ENV }}
           path: |
             playwright-report/
             test-results/

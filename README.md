@@ -81,7 +81,7 @@ Workflow berjalan saat push ke main, pull request, atau workflow_dispatch. Pada 
 
 Pipeline menjalankan npm ci, pemeriksaan TypeScript/lint/format, instalasi browser beserta dependensi sistem, kemudian test headless pada Chromium dengan dua retry. Langkah upload memakai if: always() dan menyimpan HTML report, hasil Allure mentah, laporan Allure HTML, serta debugging artifacts selama 14 hari.
 
-Buka tab Actions → pilih workflow run → Artifacts → unduh playwright-ui-report. Ekstrak lalu jalankan npx playwright show-report <lokasi>/playwright-report. Untuk Allure, jalankan npx allure generate <lokasi>/allure-results --clean -o allure-report lalu npm run report:allure:open. CI menyimpan hasil Allure mentah dan laporan Allure HTML. Untuk melihat laporan yang sudah dibuat CI, ekstrak artifact lalu jalankan npx allure open <lokasi>/allure-report.
+Buka tab Actions → pilih workflow run → Artifacts → unduh playwright-ui-report-dev. Ekstrak lalu jalankan npx playwright show-report <lokasi>/playwright-report. Untuk Allure, jalankan npx allure generate <lokasi>/allure-results --clean -o allure-report lalu npm run report:allure:open. CI menyimpan hasil Allure mentah dan laporan Allure HTML. Untuk melihat laporan yang sudah dibuat CI, ekstrak artifact lalu jalankan npx allure open <lokasi>/allure-report.
 
 ## Smoke dan regression
 
@@ -123,6 +123,46 @@ npm test                            # 9 test pada Chromium
 
 [Repository](https://github.com/faisalakmal/Playwright-Typescript-Web) · [Workflow dan artifact laporan](https://github.com/faisalakmal/Playwright-Typescript-Web/actions/workflows/playwright.yml)
 
-Badge di bagian atas README menampilkan status workflow sebenarnya. Pilih run terbaru di Actions untuk melihat langkah pemeriksaan dan mengunduh artifact playwright-ui-report berisi Playwright HTML, Allure HTML, hasil Allure mentah, dan artefak debugging bila test gagal. Laporan tidak disimpan sebagai source code di Git.
+Badge di bagian atas README menampilkan status workflow sebenarnya. Pilih run terbaru di Actions untuk melihat langkah pemeriksaan dan mengunduh artifact playwright-ui-report-dev berisi Playwright HTML, Allure HTML, hasil Allure mentah, dan artefak debugging bila test gagal. Laporan tidak disimpan sebagai source code di Git.
 
 Cakupan saat ini berfokus pada Chromium desktop dan sembilan test case; belum mencakup seluruh kombinasi data, browser, atau perangkat.
+
+## Data login valid
+
+Kredensial login valid bersumber dari SAUCE_USERNAME dan SAUCE_PASSWORD di .env lokal atau secrets GitHub Actions. Nilai tersebut diekspor sebagai env.username dan env.password melalui src/utils/env.config.ts dan dipakai seluruh test yang memerlukan login. Kredensial tidak disimpan di JSON test data.
+
+Untuk SauceDemo, gunakan akun demo standar yang ditampilkan pada halaman login. File login-negative.json hanya menentukan variasi input salah/kosong; nilai valid tetap diambil dari environment. Jika konfigurasi belum lengkap, loader menampilkan nama variabel yang harus diisi. File .env lokal tidak masuk commit.
+
+## Environment dev, staging, dan production
+
+Pemilihan environment sudah tersedia melalui TEST_ENV. Default adalah dev.
+
+| Perintah                | File lokal      | GitHub Environment |
+| ----------------------- | --------------- | ------------------ |
+| npm run test:dev        | .env.dev        | dev                |
+| npm run test:staging    | .env.staging    | staging            |
+| npm run test:production | .env.production | production         |
+
+Setup lokal:
+
+```bash
+cp .env.dev.example .env.dev
+cp .env.staging.example .env.staging
+cp .env.production.example .env.production
+# Isi BASE_URL, SAUCE_USERNAME, dan SAUCE_PASSWORD di masing-masing file.
+npm run test:dev
+npm run test:staging -- --grep @smoke
+npm run test:production -- --grep @smoke
+```
+
+Untuk kompatibilitas setup lama, dev membaca .env jika .env.dev belum tersedia. Staging dan production tidak memakai fallback .env. Nilai shell/CI diprioritaskan atas file; pastikan tidak mengekspor BASE_URL atau kredensial environment lain sebelum menjalankan test. Nilai TEST_ENV di luar tiga pilihan ditolak.
+
+Ketiga template memakai URL SauceDemo yang sama karena proyek ini belum memiliki deployment dev/staging/production terpisah. Profil berbeda tidak menciptakan deployment baru. Ganti BASE_URL dan akun pada setiap profil untuk mengarah ke lingkungan aplikasi sebenarnya. Seluruh file lokal berisi kredensial diabaikan Git; hanya template kosong yang di-commit.
+
+Pada GitHub Settings → Environments, gunakan dev, staging, dan production. Masing-masing menyimpan variable BASE_URL serta secrets SAUCE_USERNAME dan SAUCE_PASSWORD. Environment values mengalahkan repository values dengan nama sama. Trigger push/PR memakai dev. Untuk staging/production: Actions → Playwright UI Tests → Run workflow → pilih environment. Ketiga pilihan menjalankan suite yang sama; profil production demo ini juga mengandung checkout. Sesuaikan cakupan sebelum memakai target production yang memiliki transaksi nyata.
+
+Laporan HTML Playwright menyertakan environment dan baseURL pada metadata. Artifact CI diberi nama playwright-ui-report-dev, playwright-ui-report-staging, atau playwright-ui-report-production.
+
+### Penyimpanan data akun
+
+Password, token, serta username akun nyata tetap berada di file environment lokal atau secrets CI. JSON dipakai untuk data skenario, input negatif, dan ekspektasi. Daftar username demo publik seperti standard_user dan locked_out_user boleh dicatat sebagai profil di users.json, tetapi akun dengan perilaku khusus memerlukan skenario dan ekspektasi tersendiri. Suite saat ini memakai satu akun standar dari SAUCE_USERNAME; enam profil SauceDemo belum semuanya diuji.

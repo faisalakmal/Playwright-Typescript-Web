@@ -3,6 +3,7 @@ import { env } from './src/utils/env.config';
 
 export default defineConfig({
   testDir: './tests/ui',
+  metadata: { environment: env.name, baseURL: env.baseURL },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
