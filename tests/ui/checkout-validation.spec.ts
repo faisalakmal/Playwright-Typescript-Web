@@ -1,9 +1,9 @@
 import { test, expect } from '../../src/fixtures/base.fixture';
 import checkout from '../../src/test-data/checkout.json';
-import data from '../../src/test-data/negative.json';
+import scenarios from '../../src/test-data/checkout-negative.json';
 import { env } from '../../src/utils/env.config';
 
-for (const scenario of data.checkout) {
+for (const scenario of scenarios) {
   test(
     `reject checkout without ${scenario.field}`,
     { tag: ['@regression', '@negative'] },

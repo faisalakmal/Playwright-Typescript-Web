@@ -22,7 +22,7 @@ flowchart LR
 src/
   fixtures/base.fixture.ts
   pages/{base,login,inventory,cart,checkout}.page.ts
-  test-data/{checkout,negative}.json
+  test-data/{checkout,login-negative,checkout-negative}.json
   utils/env.config.ts
 tests/ui/*.spec.ts
 playwright.config.ts
@@ -107,7 +107,7 @@ Workflow CI tetap menjalankan seluruh suite melalui npm test.
 
 ## Pengujian negatif dan bukti hasil
 
-Enam test negatif menggunakan data eksternal pada src/test-data/negative.json:
+Enam test negatif menggunakan data eksternal pada src/test-data/login-negative.json dan src/test-data/checkout-negative.json:
 
 | Area     | Kasus                                                   | Pemulihan yang diperiksa              |
 | -------- | ------------------------------------------------------- | ------------------------------------- |

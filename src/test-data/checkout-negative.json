@@ -1,0 +1,14 @@
+[
+  {
+    "field": "firstName",
+    "error": "Error: First Name is required"
+  },
+  {
+    "field": "lastName",
+    "error": "Error: Last Name is required"
+  },
+  {
+    "field": "postalCode",
+    "error": "Error: Postal Code is required"
+  }
+]

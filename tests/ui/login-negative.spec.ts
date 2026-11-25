@@ -1,8 +1,8 @@
 import { test, expect } from '../../src/fixtures/base.fixture';
-import data from '../../src/test-data/negative.json';
+import scenarios from '../../src/test-data/login-negative.json';
 import { env } from '../../src/utils/env.config';
 
-for (const scenario of data.login) {
+for (const scenario of scenarios) {
   test(
     `reject login with ${scenario.name}`,
     { tag: ['@regression', '@negative'] },
